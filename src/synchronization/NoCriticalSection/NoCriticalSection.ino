@@ -1,20 +1,27 @@
+volatile int context_switch_count = 0;
+
+#define traceTASK_SWITCHED_IN() do { \
+  context_switch_count++; \
+} while(0)
+
 #include <Arduino.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 
 // Global shared resource
 int sharedCounter = 0;
+
 int finished{0};
+
 const int TASKS{10};
-const int LOOPS{1000};
+const int OUTER_LOOPS{1000};
+const int INNER_LOOPS{1000};
+const int WORKING_DELAY{10};
 
 // Mutex handle
 SemaphoreHandle_t counterMutex;
 
-
-// Task Declarations
-void incrementTaskA(void *pvParameters);
-void incrementTaskB(void *pvParameters);
+void incrementTask(void *pvParameters);
 
 void setup() {
 
@@ -23,17 +30,16 @@ void setup() {
   randomSeed(analogRead(A0));
 
   Serial.begin(9600);
-  delay(1000);
+  vTaskDelay(2000);
   Serial.println("--- ESP32 Mutex Demonstration Start ---");
 
   // 1. Create the Mutex
   counterMutex = xSemaphoreCreateMutex();
 
-  char PNames[] = {65, 66, 67, 68};
   if (counterMutex != NULL) {
     for(i = 0; i < TASKS; ++i){
 
-        static char taskName[] = "TASK_  *";
+        static char taskName[] = "TASK_ .";
         taskName[5] = static_cast<char>(65+i);
          
         char * data = static_cast<char*>(pvPortMalloc(sizeof(char)));
@@ -46,7 +52,7 @@ void setup() {
           data,               // Task input parameter
           1,                  // Priority of the task
           NULL,               // Task handle
-          tskNO_AFFINITY      // Core ID: Scheduler assign
+          tskNO_AFFINITY   // Core ID: Scheduler assign
         );
     }
   } else {
@@ -62,9 +68,26 @@ void loop() {
       Serial.print(" counter = ");
       Serial.println(sharedCounter);
       Serial.print("Should be ");
-      Serial.println(TASKS * LOOPS * 100);
+      Serial.println(TASKS * OUTER_LOOPS * INNER_LOOPS);
       finished = 0;
+
+      if (sharedCounter == TASKS * OUTER_LOOPS * INNER_LOOPS){
+        Serial.println("All is good");
+      } else {
+         Serial.println("ERRORS!!!");
+      }
+
+      Serial.print("\nContext Switches: ");
+      Serial.println(context_switch_count);
   }
+}
+
+#pragma GCC push_options
+#pragma GCC optimize ("O0") 
+void WhereAmI(char task){
+    Serial.print(task);
+    Serial.print(" is running on core: ");
+    Serial.println(xPortGetCoreID());
 }
 
 void incrementTask(void *pvParameters) {
@@ -72,15 +95,22 @@ void incrementTask(void *pvParameters) {
   TickType_t delay;
   char *letterPtr = (char *) pvParameters;
   char letter{*letterPtr};
-  int i{0};
-  for(i =0; i < LOOPS; ++i){
-    for(int j = 0; j < 100; ++j){
-       sharedCounter++;
+
+  WhereAmI(letter);
+
+  for(int i =0; i < OUTER_LOOPS; ++i){
+    int a{sharedCounter};
+ 
+    for(int j = 0; j < INNER_LOOPS; ++j){
+       //a = sharedCounter;
+       //a = a  + 1;
+       //sharedCounter = a;
+       ++sharedCounter;
     }
     delay = random(1,5);
     vTaskDelay(delay); 
   }
- //lock, increment, unlock
+
   while (xSemaphoreTake(counterMutex, portMAX_DELAY) != pdTRUE) {
     Serial.println('x');
   }
@@ -88,7 +118,8 @@ void incrementTask(void *pvParameters) {
   Serial.print(letter);
   Serial.println(" All Finished");
   xSemaphoreGive(counterMutex);
-  while(1) {
-    vTaskDelay(100);
+  while(1){
+       vTaskDelay(1);
   }
 }
+#pragma GCC pop_options
