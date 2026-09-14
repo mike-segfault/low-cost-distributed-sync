@@ -2,7 +2,7 @@
 #include <WiFiUdp.h>
 
 const char* ssid = "32_AP";
-const char* pass = "32pass";
+const char* pass = "32pass88";
 const uint16_t PORT = 4210;
 WiFiUDP udp;
 
