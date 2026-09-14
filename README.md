@@ -28,6 +28,8 @@ This project examines the topic of distributed process synchronization with the 
 ### Driver Downloads
 - CP210x Universal Windows Driver: https://www.silabs.com/documents/public/software/CP210x_Universal_Windows_Driver.zip
 - WCH CH340/CH341 Driver: https://www.wch-ic.com/downloads/CH341SER_EXE.html
+### Cores
+- ESP8266 core: http://arduino.esp8266.com/stable/package_esp8266com_index.json (add through Boards Manager if in Arduino IDE)
 
 ## Planned Work
 ### Future work includes:
