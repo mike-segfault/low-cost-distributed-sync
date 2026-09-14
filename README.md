@@ -25,6 +25,9 @@ This project examines the topic of distributed process synchronization with the 
 - ESP-NOW
 - WiFi
 - FreeRTOS
+### Driver Downloads
+- CP210x Universal Windows Driver: https://www.silabs.com/documents/public/software/CP210x_Universal_Windows_Driver.zip
+- WCH CH340/CH341 Driver: https://www.wch-ic.com/downloads/CH341SER_EXE.html
 
 ## Planned Work
 ### Future work includes:
