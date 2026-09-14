@@ -16,6 +16,7 @@ This project examines the topic of distributed process synchronization with the 
 - C
 - C++
 - Arduino Framework / ArduinoIDE
+- Powershell
 ### Hardware
 - ESP32 microcontrollers
 - ESP8226MOD microcontrollers
