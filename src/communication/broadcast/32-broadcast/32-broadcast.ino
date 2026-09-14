@@ -2,7 +2,7 @@
 #include <WiFiUdp.h> //UDP library
 
 const char* apSsid = "32_AP"; //ssid
-const char* apPass = "32pass"; //pw
+const char* apPass = "32pass88"; //pw
 const uint16_t PORT = 4210; //TCP and UDP port
 WiFiUDP udp; //setting for UDP
 
