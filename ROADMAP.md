@@ -15,6 +15,7 @@
 - [ ] Multi-node communication testing
 - [ ] Broadcasting communication between boards
 - [ ] Synchronization performance measurements
+- [ ] 3-bit sequences for activating lights off broadcasting/recieved message
 
 ---
 
