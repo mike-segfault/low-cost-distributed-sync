@@ -20,7 +20,10 @@
 ---
 
 ## Planned
-- TBD
+- [ ] Utilize GitDiagram to visualize repo structure
+
+---
+
 ### Distributed Synchronization
 
 
