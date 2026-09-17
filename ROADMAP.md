@@ -7,15 +7,17 @@
 - [x] FreeRTOS mutex demonstration
 - [x] Race condition demonstration
 - [x] Context switch instrumentation
+- [x] Broadcasting communication between boards
 
 ---
 
 ## In Progress
 
 - [ ] Multi-node communication testing
-- [ ] Broadcasting communication between boards
 - [ ] Synchronization performance measurements
 - [ ] 3-bit sequences for activating lights off broadcasting/recieved message
+- [ ] 4-bit sequence for machine ID
+- [ ] Selecting deadlock problem to represent
 
 ---
 
