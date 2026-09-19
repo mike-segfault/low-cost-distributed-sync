@@ -8,7 +8,7 @@ const uint16_t PORT = 4210; //TCP and UDP port
 WiFiUDP udp; //setting for UDP
 //IPAddress bcast(192,168,4,255);
 
-const int LED_PIN = 2; //put LED digital pin here
+const int LED_PIN = 18; //put LED digital pin here
 const unsigned long BLINK_ON_MS = 200; //200ms on const
 const unsigned long BLINK_OFF_MS = 200; //200ms off const
 
@@ -28,7 +28,7 @@ void startBlink(int count) {
 }
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   delay(200);
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);

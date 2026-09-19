@@ -13,7 +13,7 @@ const unsigned long ACK_TIMEOUT = 1500; //in ms
 const int MAX_RETRIES = 2;
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   delay(200);
   WiFi.mode(WIFI_STA);
   WiFi.softAP(apSsid, apPass); //softAP for sender
