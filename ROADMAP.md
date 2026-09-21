@@ -23,6 +23,7 @@
 
 ## Planned
 - [ ] Utilize GitDiagram to visualize repo structure
+- [ ] Directory organization
 
 ---
 
