@@ -1,3 +1,13 @@
+/*
+32-broadcast.ino
+
+Implementation of user controlled LED flashes. Broadcasting board 
+listens for connection, connects, then waits for user input of a
+positive integer. If no connection, waits and retrys. Takes user
+input and send off to connected board that has LED wired into it.
+
+Input is positive integer.
+*/
 #include <WiFi.h>
 #include <WiFiUdp.h> //UDP library
 
