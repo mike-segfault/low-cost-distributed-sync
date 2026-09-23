@@ -1,4 +1,6 @@
 /*
+8266-receiver.ino 
+
 ESP8266MOD implementation for receiving end for connecting to UDP broadcasting 
 board. Broadcasting board needs to have SSID set, and at least 8 character password,
 which also needs to be replicated on the receiving end.
