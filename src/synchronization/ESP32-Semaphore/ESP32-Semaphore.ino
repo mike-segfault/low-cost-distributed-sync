@@ -1,3 +1,19 @@
+/*
+ESP32-Semaphore.ino
+
+Implementation of classic mutex-based mutual exclusion on single
+ESP32 using FreeRTOS. Creates a mutex and spawns four FreeRTOS tasks,
+each pinned across cores with no fixed affinity (scheduler decides),
+all running the same incrementTask but with distinct letter presses
+in as parameter. 
+
+Each tasks loops forever, competing to aquire shraed mutex. Once task
+gets the lock, it enters critical section: printing shared counter, incrememting
+it, holding lock briefly, prints updated value, then releases the mutex. After
+release, task sleeps for random interval before trying again, which staggers
+contention and makes lock aquisition order visable in Serial output.
+*/
+
 #include <Arduino.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
