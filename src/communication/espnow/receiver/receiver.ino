@@ -1,3 +1,16 @@
+/*
+receiver.ino
+
+Implementation of ESP-NOW library utilizing peer-to-peer connectionless wireless 
+communication involving the MAC addresses of each microcontroller. Each connecting 
+boards needs each other's MAC addresses. 
+
+This implementation involves initializing ESP-NOW and having the board in station
+mode, then registering a callback that fires when a packet arrives from a paired sender.
+Incoming bytes of randomly generated fake data are stored in a struct, then parsed 
+to make readable.
+*/
+
 #include <WiFi.h>
 #include <esp_now.h>
 
