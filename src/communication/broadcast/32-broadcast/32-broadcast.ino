@@ -2,7 +2,10 @@
 ESP32 implementation of a UDP broadcast. Requires power, 
 and receiving-end microcontroller with WiFi capability.
 Also, receiving end needs to have correct SSID and 
-PASSWORD. Password set on this board needs to be at least 8 characters long.
+PASSWORD. Password set on this board needs to be at 
+least 8 characters long.
+
+Port 4210 is used here, which is the TCP and UDP port.
 */
 #include <WiFi.h>
 #include <WiFiUdp.h> //UDP library
