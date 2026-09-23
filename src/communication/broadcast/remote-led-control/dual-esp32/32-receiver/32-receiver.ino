@@ -1,3 +1,18 @@
+/*
+32-receiver.ino
+
+ESP32 implementation of user controlled LED flashes. Broadcasting board 
+listens for connection, connects, then waits for user input of a
+positive integer. If no connection, waits and retrys. Takes user
+input and send off to connected board that has LED wired into it.
+
+This is also utilizing an enum for the stage it's in while it waits
+for user input. IDLE for waiting on new input, ON for LED being on, 
+OFF for LED being off. This is very important for the later stages of
+the project as the representation of processes being in the critical
+stage will require its stages to be shown.
+*/
+
 //RECEIVER esp32 - blinking LED off user CMD
 #include <WiFi.h>
 #include <WiFiUdp.h> //UDP library
