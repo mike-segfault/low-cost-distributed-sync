@@ -1,3 +1,12 @@
+/*
+8266-receiver.ino
+
+ESP8266MOD implementation of user controlled LED from inputs. Connects
+to broadcasting board and waits for user inputted ingteger. Receives
+inputted integer from broadcasting board (ESP32 for this) and flashes LED
+in accordance with the inputted integer.
+*/
+
 #include <ESP8266WiFi.h> //for 8266
 #include <WiFiUdp.h>
 
