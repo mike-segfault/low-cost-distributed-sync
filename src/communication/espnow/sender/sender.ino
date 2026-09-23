@@ -1,3 +1,13 @@
+/*
+sender.ino
+
+Implementation of the sender half. Randomly generates "data" of temperature
+and humidity every few seconds. The, sends off to known MAC address from
+receiverMAC[]. Random delay included to avoid collision.
+
+Requires MAC address of board to send to.
+*/
+
 #include <WiFi.h>
 #include <esp_now.h>
 
