@@ -1,3 +1,14 @@
+/*
+32-send.ino
+
+Implementation of user controlled LED flashes. Broadcasting board 
+listens for connection, connects, then waits for user input of a
+positive integer. If no connection, waits and retrys. Takes user
+input and send off to connected board that has LED wired into it.
+
+Input is positive integer.
+*/
+
 //SENDER esp32 - asks for user input and sends CMD to RECEIVER
 #include <WiFi.h>
 #include <WiFiUdp.h> //UDP library
