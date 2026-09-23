@@ -1,3 +1,10 @@
+/*
+ESP8266MOD implementation for receiving end for connecting to UDP broadcasting 
+board. Broadcasting board needs to have SSID set, and at least 8 character password,
+which also needs to be replicated on the receiving end.
+
+Port 4210 is used here, which is the TCP and UDP port.
+*/
 #include <ESP8266WiFi.h> //for 8266
 #include <WiFiUdp.h>
 
