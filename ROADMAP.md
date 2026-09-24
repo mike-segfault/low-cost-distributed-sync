@@ -15,7 +15,7 @@
 
 - [ ] Multi-node communication testing
 - [ ] Synchronization performance measurements
-- [ ] 3-bit sequences for activating lights off broadcasting/recieved message
+- [ ] 3-bit sequences for activating lights off broadcasting/received message
 - [ ] 4-bit sequence for machine ID
 - [ ] Selecting deadlock problem to represent
 
