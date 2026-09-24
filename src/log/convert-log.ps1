@@ -8,7 +8,7 @@
 
     Use script for time-accurate logs and for following international standards.
 
-    powershell.exe -ExecutionPolicy Bypass -File "C:\Path\To\YourScript.ps1"
+    powershell.exe -ExecutionPolicy Bypass -File "C:\Path\To\convert-log.ps1"
 #>
 
 #date and timezone
