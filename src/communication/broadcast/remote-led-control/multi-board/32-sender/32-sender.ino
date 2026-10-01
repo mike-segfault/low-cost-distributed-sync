@@ -74,6 +74,7 @@ int colorCode(char c) {
 String buildColorPayload(const String& tail, bool& ok, int& totalBlinks) {
   String payload = "";
   totalBlinks = 0;
+  int seenMask = 0; //tracks color bits being used
   int i = 0;
   int n = tail.length();
   while (i < n) {
@@ -89,10 +90,12 @@ String buildColorPayload(const String& tail, bool& ok, int& totalBlinks) {
       return "";
     }
     int count = tail.substring(numStart, i).toInt();
-    if (count < 0 || count > 7) {
+    //count must be 1-7
+    if (count < 1 || count > 7 || (seenMask & code)) {
       ok = false;
       return "";
     }
+    seenMask |= code; //mark color's bit as used
     totalBlinks += count;
     if (payload.length() > 0) payload += ",";
     payload += String(code) + ":" + String(count);
@@ -153,7 +156,7 @@ void processCommand(const String& cmdStr) {
   if (firstSpace <= 0) {
     Serial.print("Skipped \"");
     Serial.print(cmdStr);
-    Serial.println("\" - format: <board> <ColorCount pairs>, e.g. 1 R3 G5");
+        Serial.println("\" - format: <Letter><1-7 count> pairs, each color once, e.g. R3 G5 B1");
     return;
   }
   String boardStr = cmdStr.substring(0, firstSpace);
@@ -181,7 +184,7 @@ void processCommand(const String& cmdStr) {
   if (!ok) {
     Serial.print("Skipped \"");
     Serial.print(cmdStr);
-    Serial.println("\" - format: <Letter><0-7 count> pairs, e.g. R3 G5 B1");
+        Serial.println("\" - format: <Letter><1-7 count> pairs, each color once, e.g. R3 G5 B1");
     return;
   }
   seq++;
