@@ -35,6 +35,24 @@ int pinForCode(int code) {
   return -1;
 }
 
+//3-bit value -> "011"
+String bits3(int v) {
+  String out = "";
+  for (int bit = 2; bit >= 0; bit--) out += ((v >> bit) & 1) ? '1' : '0';
+  return out;
+}
+
+//011 for 3, -1 if not three binary characters
+int parseBits3(const String& s) {
+  if (s.length() != 3) return -1;
+  int v = 0;
+  for (int i = 0; i < 3; i++) {
+    if (s[i] != '0' && s[i] != '1') return -1;
+    v = (v << 1) | (s[i] - '0');
+  }
+  return v;
+}
+
 struct BlinkJob { int pin; int count; };
 const int MAX_JOBS = 3;
 BlinkJob jobQueue[MAX_JOBS];
@@ -52,7 +70,7 @@ uint16_t lastRemotePort = 0;
 int lastSeq = -1;
 
 void sendDone(int seqToAck) {
-  String doneMsg = String("DONE:") + String(seqToAck);
+  String doneMsg = String("DONE:") + String(seqToAck) + ":" + bits3(MY_BOARD_CODE);
   udp.beginPacket(lastRemoteIp, lastRemotePort);
   udp.write((const uint8_t*)doneMsg.c_str(), doneMsg.length());
   udp.endPacket();
@@ -109,27 +127,25 @@ void setup() {
   Serial.println(MY_BOARD_CODE);
 }
 
-//parses "1:3,2:5,4:1" into up to MAX_JOBS BlinkJob entries
-void parsePayload(const String& payload) {
+//builds blink jobs from the color bits in R -> G -> B order,
+//taking the next count from "3,5" for each bit that is set
+void parseCommand(int colorMask, const String& counts) {
   jobCount = 0;
   int start = 0;
-  int n = payload.length();
-  while (start < n && jobCount < MAX_JOBS) {
-    int comma = payload.indexOf(',', start);
-    String entry = (comma == -1) ? payload.substring(start) : payload.substring(start, comma);
-    int colon = entry.indexOf(':');
-    if (colon > 0) {
-      int code = entry.substring(0, colon).toInt();
-      int count = entry.substring(colon + 1).toInt();
-      int pin = pinForCode(code);
-      if (pin != -1 && count > 0) {
-        jobQueue[jobCount].pin = pin;
-        jobQueue[jobCount].count = count;
-        jobCount++;
-      }
+  for (int bit = 0; bit < 3 && jobCount < MAX_JOBS; bit++) {
+    int code = 1 << bit; //001 = R, 010 = G, 100 = B
+    if (!(colorMask & code)) continue;
+    if (start > (int)counts.length()) break; //ran out of counts
+    int comma = counts.indexOf(',', start);
+    String countStr = (comma == -1) ? counts.substring(start) : counts.substring(start, comma);
+    start = (comma == -1) ? counts.length() + 1 : comma + 1;
+    int count = countStr.toInt();
+    int pin = pinForCode(code);
+    if (pin != -1 && count > 0) {
+      jobQueue[jobCount].pin = pin;
+      jobQueue[jobCount].count = count;
+      jobCount++;
     }
-    if (comma == -1) break;
-    start = comma + 1;
   }
 }
 
@@ -145,24 +161,27 @@ void handleUdp() {
 
   if (!s.startsWith("CMD:")) return;
 
+  //CMD:<seq>:<board bits>:<color bits>:<count>,<count>...
   int firstColon = s.indexOf(':');
   int secondColon = s.indexOf(':', firstColon + 1);
   int thirdColon = s.indexOf(':', secondColon + 1);
-  if (secondColon < 0 || thirdColon < 0) return;
+  int fourthColon = s.indexOf(':', thirdColon + 1);
+  if (secondColon < 0 || thirdColon < 0 || fourthColon < 0) return;
 
-  String seqStr = s.substring(firstColon + 1, secondColon);
-  String boardStr = s.substring(secondColon + 1, thirdColon);
-  String payload = s.substring(thirdColon + 1);
-  int seq = seqStr.toInt();
-  int boardCode = boardStr.toInt();
+  int seq = s.substring(firstColon + 1, secondColon).toInt();
+  int boardMask = parseBits3(s.substring(secondColon + 1, thirdColon));
+  int colorMask = parseBits3(s.substring(thirdColon + 1, fourthColon));
+  String counts = s.substring(fourthColon + 1);
+  if (boardMask < 0 || colorMask < 0) return;
 
-  if (boardCode != MY_BOARD_CODE) {
+  //this boards bit not set -> not for this board, no ACK, no blink
+  if ((boardMask & MY_BOARD_CODE) == 0) {
     Serial.print("Ignored seq=");
     Serial.print(seq);
-    Serial.print(" (addressed to board code ");
-    Serial.print(boardCode);
+    Serial.print(" (addressed to boards ");
+    Serial.print(bits3(boardMask));
     Serial.println(")");
-    return; //not for this board - no ACK, no blink
+    return;
   }
 
   Serial.print("Received (for b2 8266): ");
@@ -170,17 +189,20 @@ void handleUdp() {
 
   IPAddress remoteIp = udp.remoteIP();
   uint16_t remotePort = udp.remotePort();
-  String reply = String("OK:") + String(seq);
+  String reply = String("OK:") + String(seq) + ":" + bits3(MY_BOARD_CODE);
   udp.beginPacket(remoteIp, remotePort);
   udp.write((const uint8_t*)reply.c_str(), reply.length());
   udp.endPacket();
   Serial.print("Sent reply: ");
   Serial.println(reply);
 
+  //sender retried, re-ACK only, don't blink again
+  if (seq == lastSeq) return;
+
   lastRemoteIp = remoteIp;
   lastRemotePort = remotePort;
   lastSeq = seq;
-  parsePayload(payload);
+  parseCommand(colorMask, counts);
   startSequence();
   if (jobCount == 0) {
     sendDone(seq);
