@@ -41,6 +41,7 @@ This project examines the topic of distributed process synchronization with the 
 - Cigarette Smokers problem
 - Additional synchronization experiments on constrained hardware
 - Evaluation of synchronization performance and scalability across multiple nodes
+- Logs
 
 ## Refrences
 1. Gupta. *Achieving Low Cost Synchronization in a Multiprocessor System*. Future Generation Computer Systems, Vol. 6, 1990. DOI: https://doi.org/10.1016/0167-739X(90)90023-7
