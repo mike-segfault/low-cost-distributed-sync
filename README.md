@@ -51,4 +51,5 @@ This project examines the topic of distributed process synchronization with the 
 5. Patil, Suhas S. *Limitations and Capabilities of Dijkstra's Semaphore Primitives for Coordination among Processes*. Group Memo 57, February 1971. https://wiki.eecs.yorku.ca/course_archive/2014-15/W/6490A/_media/public:patil.pdf
 6. ROHINI College of Engineering and Technology. *Distributed Embedded Systems*. https://www.rcet.org.in/uploads/academics/rohini_85806983944.pdf
 7. Silberschatz, Avi, Peter Baer Galvin, and Greg Gagne. *Operating System Concepts*. Chapters 6-8. John Wiley & Sons, 2018.
-8. Thompson, Michael and Daniel Bennett. *Cigarette Smokers Problem*. April 2026. https://mirkwood.cs.edinboro.edu/~bennett/class/cmsc4000/spring2026/notes/smokers.html
+8. Suzuki, Ichiro, Tadao Kasami. *A distributed mutual exclusion algorithm*. ACM Transactions on Computer Systems (TOCS), Volume 3, Issue 4, Pages 344 - 349, November 1985. https://dl.acm.org/doi/abs/10.1145/6110.214406
+9. Thompson, Michael and Daniel Bennett. *Cigarette Smokers Problem*. April 2026. https://mirkwood.cs.edinboro.edu/~bennett/class/cmsc4000/spring2026/notes/smokers.html
