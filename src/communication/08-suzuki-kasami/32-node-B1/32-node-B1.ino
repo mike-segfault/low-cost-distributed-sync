@@ -307,6 +307,26 @@ void startJob(int index) {
 
 // *CRITICAL SECTION*
 
+void enterCS() {
+  inCS = true;
+  takeMyCommands();
+  jobIndex = 0;
+  if (jobCount > 0) startJob(0);
+}
+
+//this boards cmds done, maybe add one, mark own request served
+void finishCS()M{
+  maybeAddRandomCommand();
+  LN[me()] = RN[me()];
+  inCS = false;
+  Serial.print("Done | commands: ");
+}
+
+// *PASSING THE TOKEN*
+
+void sendToken() {
+  
+}
 
 void setup() {
   // put your setup code here, to run once:
