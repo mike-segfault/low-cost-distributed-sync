@@ -13,6 +13,7 @@
 
 ## In Progress
 
+- [ ] Methodical Stepthrough (pseudocode probably)
 - [ ] Libraries
 - [ ] Multi-node communication testing
 - [ ] Synchronization performance measurements
