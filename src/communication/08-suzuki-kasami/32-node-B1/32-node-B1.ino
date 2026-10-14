@@ -3,6 +3,25 @@
 
 Modifiable token. Functions were needed for every aspect of the cmd parsing and
 handling of the tasks. Everything is self-contained.
+
+Board 1 (ESP32), node 001. Creates the token at boot.
+Suzuki-Kasami token peer. No coordinator: the ESP32 access point only provides
+WiFi and logs traffic. Peers: B1 (001), B2 (010), B3 (100).
+
+Asking for the token: at random intervals this board broadcasts
+"REQ:<node>:<n>" without knowing what's on the token. Every board records
+request numbers (RN) and the order requests reach it. When two boards ask at
+nearly the same time, whichever request lands first at the holder goes first.
+
+The token is "TOKEN:<seq>:<to>:<LN>:<waiting>:<commands>"
+  LN - last request number served for B1,B2,B3, e.g. "3,0,2"
+  waiting - nodes queued for the token, e.g. "010,100" ('-' if none)
+  commands - "boards/colors/counts" entries split by '|' ('-' if none)
+The holder runs every command with its bit set, clears its bit, may 
+add a random valid command, then passes the token to the next waiting 
+node. With nobody waiting, it keeps the token.
+
+LEDs: TOKEN on while holding the token, WAITING on any time it isn't.
 */
 #include <WiFi.h>
 #include <WiFiUdp.h>
