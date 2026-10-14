@@ -214,6 +214,100 @@ void parseQ(const String& s) {
   }
 }
 
+int coundCmds(const String& q) {
+  if (q.length() == 0) return 0;
+  int count 1;
+  for (unsigned int i = 0; i < q.length(); i++) {
+    if (q[i] == '|') count++;
+  }
+  return count;
+}
+
+// *COMMANDs*
+
+//adds blink jobs for color bits in R -> G -> B order, one cound each from "3,5"
+void addJobs(int colorMask, const String& counts) {
+  int start = 0;
+  for (int bit = 0; bit < 3 && jobCount < MAX_JOBS; bit++) {
+    int code = 1 << bit; //001 R, 010 G, 100 B
+    if (!(colorMask & code)) continue;
+    if (start > (int)counts.length()) break; //ran out of counts
+    int comma = counts.indexOf(',', start);
+    String countStr = (comma == -1) ? counts.substring(start) : counts.substring(start, comma);
+    start = (comma == -1) ? counts.length() + 1 : comma + 1;
+    int count = countStr.toInt();
+    int pin = pinForCode(code);
+    if (pin != -1 && count > 0) {
+      jobQueue[jobCount].pin = pin;
+      jobQueue[jobCount].count = count;
+      jobCount++;
+    }
+  }
+}
+
+//takes this boards cmds off token: queues their blinks and clears this 
+// boards bit, cmds with no boards removed
+void takeMyCommands() {
+  jobCount = 0;
+  String kept = "";
+  int start = 0;
+  int n = cmdQueue.length();
+  while (start < n) {
+    int bar = cmdQueue.indexOf('|', start);
+    String entry = (bar == -1) ? cmdQueue.substring(start) : cmdQueue.substring(start, bar);
+    start = (bar == -1) ? n : bar + 1;
+    int s1 = entry.indexOf('/');
+    int s2 = entry.indexOf('/', s1 + 1);
+    if (s1 < 0 || s2 < 0) continue; //malformed, drop
+    int boards = parseBits3(entry.substring(0, s1));
+    int colors = parseBits3(entry.substring(s1 + 1, s2));
+    String counts = entry.substring(s1 + 1);
+    if (boards <= 0 || colors <= 0) continue;
+    if (boards & MY_NODE) { //bitwise
+      Serial.print("Running: ");
+      Serial.println(entry);
+      addJobs(colors, counts);
+      boards &= ~MY_NODE; //this baords part is done
+    }
+    if (boards != 0) {
+      if (kept.length() > 0) kept += "|";
+      kept += bits3(boards) + "/" + bits3(colors) + "/" + counts;
+    }
+  }
+  cmdQueue = kept;
+}
+
+//random valid cmd
+//and boards, any colors, 1-MAX_RANDOM_COUNT blinks per color
+void maybeAddRandomCommand() {
+  if (random(100) >= ADD_CHANCE) return;
+  if (countCmds(cmdQueue) >= MAX_CMDS) return;
+  int boards = random(1, 8); //001-111
+  int colors = random(1, 8); 
+  String counts = "";
+  for (int bit = 0; bit < 3; bit++) {
+    if (!(colors & (1 << bit))) continue;
+    if (counts.length() > 0) counts += ",";
+    counts += String(random(1, MAX_RANDOM_COUNT + 1));
+  }
+  String entry = bits3(boards) + "/" + bits3(colors) + "/" + counts;
+  if (cmdQueue.length() > 0) cmdQueue += "|";
+  cmdQueue += entry;
+  Serial.print("Added random command: ");
+  Serial.println(entry);
+}
+
+void startJob(int index) {
+  String entry = bits3(boards) + "/" + bits3(colors) + "/" + counts;
+  if (cmdQueue.length() > 0) cmdQueue += "|";
+  cmdQueue += entry;
+  Serial.print("Added random command: ");
+  Serial.println(entry);
+}
+
+// *CRITICAL SECTION*
+
+
 void setup() {
   // put your setup code here, to run once:
 
