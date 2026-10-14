@@ -1,7 +1,8 @@
 /*
 32-node-B1
 
-
+Modifiable token. Functions were needed for every aspect of the cmd parsing and
+handling of the tasks. Everything is self-contained.
 */
 #include <WiFi.h>
 #include <WiFiUdp.h>
@@ -65,6 +66,153 @@ bool passing = false;
 int passTarget = -1; //node index being given token
 int passAttempt = 0; //0 = first send, 1+ = retries
 unsigned long passStartedAt = 0;
+
+//3-bit value
+String bits3(int v) {
+  String out = "";
+  for (int bit = 2; bit >= 0; bit--) out += ((v >> bit) & 1) ? '1' : '0';
+  return out;
+}
+
+//001 for 3, 01 if not three binary characters
+int parseBits3(const String& s) {
+  if (s.length() != 3) return -1;
+  int v = 0;
+  for (int i = 0; i < 3; i++) {
+    if (s[i] != '0' && s[i] != '1') return -1;
+    v = (v << 1) | (s[i] - '0');
+  }
+  return v;
+}
+
+//node bits, index (001 -> 0, 010 -> 1, 100 -> 2 ),  -1 if not a node
+int nodeIndex(int bits) {
+  for (int i = 0; i < NODES; i++) {
+    if (NODE_BITS[i] == bits) return i;
+  }
+  return -1;
+}
+
+//for what its doing
+int me() {
+  return nodeIndex(MY_NODE);
+}
+
+void broadcast(const String& msg) {
+  udp.beginPacket(bcast, PORT);
+  udp.write((const uint8_t*)msg.c_str(), msg.length());
+  udp.endPacket();
+}
+
+//3-bit color code GPIO 001=Red | 010=Green | 100=Blue
+int pinForCode(int code) {
+  switch (code) {
+    case 1: return RED_PIN;
+    case 2: return GREEN_PIN;
+    case 4: return BLUE_PIN;
+  }
+  return -1;
+}
+
+void setTokenLeds(bool holding) {
+  digitalWrite(TOKEN_PIN, holding ? HIGH : LOW);
+  digitalWrite(WAIT_PIN, holding ? LOW : HIGH);
+}
+
+void stopBlinking() {
+  if (currentPin >= 0) digitalWrite(currentPin, LOW);
+  blinkState = IDLE;
+  jobCount = 0;
+}
+
+void scheduleRequest() {
+  nextRequestAt = millis() + random(REQUEST_MIN_MS, REQUEST_MAX_MS + 1);
+}
+
+// *BOOKKEEPING*
+
+bool inArrival(int j) {
+  for (int i = 0; i < arrivalLen; i++) {
+    if (arrival[i] == j) return true;
+  }
+  return false;
+}
+
+void arrivalAdd(int j) {
+  if (!inArrival(j) && arrivalLen < NODES) arrival[arrivalLen++] = j;
+}
+
+void arrivalRemove(int j) {
+  for (int i = 0; i < arrivalLen; i++) {
+    if (arrival[i] == j) {
+      for (int k = i; k < arrivalLen - 1; k++) arrival[k] = arrival[k + 1];
+      arrivalLen--;
+      return;
+    }
+  }
+}
+
+//node j has asjed for token and hasnt been sreved yet
+bool outstanding(int j) {
+  return RN[j] > LN[j];
+}
+
+bool inTokenQ(int j) {
+  for (int i = 0; i < tokenQLen; i++) {
+    if (tokenQ[i] == j) return true;
+  }
+  return false;
+}
+
+// *TOKEN FIELD FORMATTING*
+String lnString() {
+  String out = "";
+  for (int i = 0; i < NODES; i++) {
+    if (i > 0) out += ",";
+    out += String(LN[i]);
+  }
+  return out;
+}
+
+String qString() {
+  if (tokenQLen == 0) return "-";
+  String out = "";
+  for (int i = 0; i < tokenQLen; i++) {
+    if (i > 0) out += ",";
+    out += bits3(NODE_BITS[tokenQ[i]]);
+  }
+  return out;
+}
+
+String cmdString() {
+  return cmdQueue.length() > 0 ? cmdQueue : String("-");
+}
+
+void parseLN(const String& s) {
+  int start = 0;
+  for (int i = 0; i < NODES; i++) {
+    int comma = s.indexOf(',', start);
+    String part = (comma == -1) ? s.substring(start) : s.substring(start, comma);
+    LN[i] = (unsigned long)part.toInt();
+    if (comma == -1) break;
+    start = comma + 1;
+  }
+}
+
+void parseQ(const String& s) {
+  tokenQLen = 0;
+  if (s == "-") return;
+  int start = 0;
+  int n = s.length();
+  while (start < n && tokenQLen < NODES) {
+    int comma = s.indexOf(',', start);
+    String part = (comma == -1) ? s.substring(start) : s.substring(start, comma);
+    int j = nodeIndex(parseBits3(part));
+    if (j >= 0 && !inTokenQ(j)) tokenQ[tokenQLen++] = j;
+    if (comma == -1) break;
+    start = comma + 1;
+  }
+}
 
 void setup() {
   // put your setup code here, to run once:
