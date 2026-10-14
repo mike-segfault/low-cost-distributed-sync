@@ -315,7 +315,7 @@ void enterCS() {
 }
 
 //this boards cmds done, maybe add one, mark own request served
-void finishCS()M{
+void finishCS() {
   maybeAddRandomCommand();
   LN[me()] = RN[me()];
   inCS = false;
@@ -325,7 +325,7 @@ void finishCS()M{
 // *PASSING THE TOKEN*
 
 void sendToken() {
-  
+
 }
 
 void setup() {
