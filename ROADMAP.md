@@ -8,6 +8,9 @@
 - [x] Race condition demonstration
 - [x] Context switch instrumentation
 - [x] Broadcasting communication between boards
+- [x] Multi-node communication testing
+- [x] 3-bit sequences for activating lights off broadcasting/received message
+- [x] 4-bit sequence for machine ID
 
 ---
 
@@ -15,17 +18,13 @@
 
 - [ ] Methodical Stepthrough (pseudocode probably)
 - [ ] Libraries
-- [ ] Multi-node communication testing
 - [ ] Synchronization performance measurements
-- [ ] 3-bit sequences for activating lights off broadcasting/received message
-- [ ] 4-bit sequence for machine ID
 - [ ] Selecting deadlock problem to represent
 
 ---
 
 ## Planned
 - [ ] Utilize GitDiagram to visualize repo structure
-- [ ] Directory organization
 
 ---
 
