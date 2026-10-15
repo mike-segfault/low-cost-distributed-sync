@@ -40,13 +40,14 @@ Adjust these values to match the date, timezone, and filenames associated with t
 
 Place the source log file in the same directory as the script and run:
 
-```powershell
-.\convert-log.ps1
+```
+powershell "C:\Path\To\convert-log.ps1"
 ```
 
 If you encounter an error stating that script execution is disabled, bypass the policy for the current session by adding the ```-ExecutionPolicy Bypass``` flag:
 
-```powershell -ExecutionPolicy Bypass -File "C:\Path\To\script.ps1"
+```
+powershell -ExecutionPolicy Bypass -File "C:\Path\To\script.ps1"
 ```
 
 After processing, the converted log is written to the configured output file.
