@@ -80,6 +80,12 @@ bool hasToken = false;
 unsigned long tokenSeq = 0; //seq of token this board holds/passes
 unsigned long highestSeen = 0; //newest token seq seen anywhere on ring
 unsigned long lastAcceptedSeq = 0; //so a retried token is re-ACKed, not taken twice
+unsigned long LN[NODES] = {0, 0, 0};
+int tokenQ[NODES];
+int tokenQLen = 0;
+String cmdQueue = "";
+bool inCS = false;
+unsigned long heldSince = 0;
 bool passing = false;
 int passTarget = -1; //node index being given token
 int passAttempt = 0; //0 = first send, 1+ = retries
@@ -232,9 +238,9 @@ void parseQ(const String& s) {
   }
 }
 
-int coundCmds(const String& q) {
+int countCmds(const String& q) {
   if (q.length() == 0) return 0;
-  int count 1;
+  int count = 1;
   for (unsigned int i = 0; i < q.length(); i++) {
     if (q[i] == '|') count++;
   }
@@ -279,7 +285,7 @@ void takeMyCommands() {
     if (s1 < 0 || s2 < 0) continue; //malformed, drop
     int boards = parseBits3(entry.substring(0, s1));
     int colors = parseBits3(entry.substring(s1 + 1, s2));
-    String counts = entry.substring(s1 + 1);
+    String counts = entry.substring(s2 + 1);
     if (boards <= 0 || colors <= 0) continue;
     if (boards & MY_NODE) { //bitwise
       Serial.print("Running: ");
@@ -316,11 +322,11 @@ void maybeAddRandomCommand() {
 }
 
 void startJob(int index) {
-  String entry = bits3(boards) + "/" + bits3(colors) + "/" + counts;
-  if (cmdQueue.length() > 0) cmdQueue += "|";
-  cmdQueue += entry;
-  Serial.print("Added random command: ");
-  Serial.println(entry);
+  currentPin = jobQueue[index].pin;
+  blinkRemaining = jobQueue[index].count;
+  blinkState = ON;
+  digitalWrite(currentPin, HIGH);
+  blinkTimer = millis();
 }
 
 // *CRITICAL SECTION*
@@ -338,6 +344,7 @@ void finishCS() {
   LN[me()] = RN[me()];
   inCS = false;
   Serial.print("Done | commands: ");
+  Serial.println(cmdString());
 }
 
 // *PASSING THE TOKEN*
@@ -370,7 +377,7 @@ void passOn() {
   int kept = 0; //drop queue entrties that were already served
   for (int i = 0; i < tokenQLen; i++) {
     int j = tokenQ[i];
-    int (j != me() && outstanding(j)) tokenQ[kept++] = j;
+    if (j != me() && outstanding(j)) tokenQ[kept++] = j;
   }
   tokenQLen = kept;
   for (int i = 0; i < arrivalLen; i++) {
