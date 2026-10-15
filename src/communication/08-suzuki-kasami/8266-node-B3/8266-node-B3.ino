@@ -31,7 +31,7 @@ const uint16_t PORT = 4210;
 WiFiUDP udp;
 IPAddress bcast(192, 168, 4, 255);
 
-const int MY_NODE = 0b100; //BOARD 2 = 100
+const int MY_NODE = 0b100; //BOARD 3 = 100
 const int NODES = 3;
 const int NODE_BITS[NODES] = {0b001, 0b010, 0b100}; //B1,B2,B3
 const bool CREATES_TOKEN = true; //one node creates token at boot
