@@ -34,7 +34,7 @@ IPAddress bcast(192, 168, 4, 255);
 const int MY_NODE = 0b010; //BOARD 2 = 010
 const int NODES = 3;
 const int NODE_BITS[NODES] = {0b001, 0b010, 0b100}; //B1,B2,B3
-const bool CREATES_TOKEN = true; //one node creates token at boot
+const bool CREATES_TOKEN = false; //one node creates token at boot
 
 const int RED_PIN   = 14; //D5
 const int GREEN_PIN = 12; //D6
@@ -625,7 +625,7 @@ void setup() {
   digitalWrite(GREEN_PIN, LOW);
   digitalWrite(BLUE_PIN, LOW);
   setTokenLeds(false);
-  //ESP32 random() uses the hardware RNG, no seed needed
+  randomSeed(ESP.getChipId() ^ micros()); //different random sequence per board
 
   WiFi.mode(WIFI_STA);
   WiFi.begin(apSsid, apPass);
