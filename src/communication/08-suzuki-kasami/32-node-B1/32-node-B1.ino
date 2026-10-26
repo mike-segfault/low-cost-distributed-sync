@@ -32,9 +32,9 @@ const uint16_t PORT = 4210;
 WiFiUDP udp;
 IPAddress bcast(192, 168, 4, 255);
 
-const int MY_NODE = 0b001; //BOARD 1 = 001
+const int MY_NODE = 0b0001; //BOARD 1 = 0001
 const int NODES = 3;
-const int NODE_BITS[NODES] = {0b001, 0b010, 0b100}; //B1,B2,B3
+const int NODE_BITS[NODES] = {0b0001, 0b0010, 0b0100}; //B1,B2,B3,B4
 const bool CREATES_TOKEN = true; //one node creates token at boot
 
 const int RED_PIN   = 14; //D14
@@ -69,7 +69,7 @@ unsigned long blinkTimer = 0;
 int currentPin = -1;
 
 //requests RN[i] = highest request number heard from node i
-unsigned long RN[NODES] = {0, 0, 0};
+unsigned long RN[NODES] = {0, 0, 0, 0};
 int arrival[NODES]; //nodes with requests, in order they reached this board
 int arrivalLen = 0;
 bool requesting = false;
@@ -81,7 +81,7 @@ bool hasToken = false;
 unsigned long tokenSeq = 0; //seq of token this board holds/passes
 unsigned long highestSeen = 0; //newest token seq seen anywhere on ring
 unsigned long lastAcceptedSeq = 0; //so a retried token is re-ACKed, not taken twice
-unsigned long LN[NODES] = {0, 0, 0}; //last request number served per node
+unsigned long LN[NODES] = {0, 0, 0, 0}; //last request number served per node
 int tokenQ[NODES]; //node indexes waiting for token
 int tokenQLen = 0;
 String cmdQueue = "";
@@ -93,17 +93,17 @@ int passAttempt = 0; //0 = first send, 1+ = retries
 unsigned long passStartedAt = 0;
 
 //3-bit value
-String bits3(int v) {
+String bits4(int v) {
   String out = "";
-  for (int bit = 2; bit >= 0; bit--) out += ((v >> bit) & 1) ? '1' : '0';
+  for (int bit = 3; bit >= 0; bit--) out += ((v >> bit) & 1) ? '1' : '0';
   return out;
 }
 
-//001 for 3, 01 if not three binary characters
-int parseBits3(const String& s) {
-  if (s.length() != 3) return -1;
+//0011 for 3, -1 if not three binary characters
+int parseBits4(const String& s) {
+  if (s.length() != 4) return -1;
   int v = 0;
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 4; i++) {
     if (s[i] != '0' && s[i] != '1') return -1;
     v = (v << 1) | (s[i] - '0');
   }
@@ -204,7 +204,7 @@ String qString() {
   String out = "";
   for (int i = 0; i < tokenQLen; i++) {
     if (i > 0) out += ",";
-    out += bits3(NODE_BITS[tokenQ[i]]);
+    out += bits4(NODE_BITS[tokenQ[i]]);
   }
   return out;
 }
@@ -232,7 +232,7 @@ void parseQ(const String& s) {
   while (start < n && tokenQLen < NODES) {
     int comma = s.indexOf(',', start);
     String part = (comma == -1) ? s.substring(start) : s.substring(start, comma);
-    int j = nodeIndex(parseBits3(part));
+    int j = nodeIndex(parseBits4(part));
     if (j >= 0 && !inTokenQ(j)) tokenQ[tokenQLen++] = j;
     if (comma == -1) break;
     start = comma + 1;
@@ -284,7 +284,7 @@ void takeMyCommands() {
     int s1 = entry.indexOf('/');
     int s2 = entry.indexOf('/', s1 + 1);
     if (s1 < 0 || s2 < 0) continue; //malformed, drop
-    int boards = parseBits3(entry.substring(0, s1));
+    int boards = parseBits4(entry.substring(0, s1));
     int colors = parseBits3(entry.substring(s1 + 1, s2));
     String counts = entry.substring(s2 + 1);
     if (boards <= 0 || colors <= 0) continue;
@@ -296,7 +296,7 @@ void takeMyCommands() {
     }
     if (boards != 0) {
       if (kept.length() > 0) kept += "|";
-      kept += bits3(boards) + "/" + bits3(colors) + "/" + counts;
+      kept += bits4(boards) + "/" + bits3(colors) + "/" + counts;
     }
   }
   cmdQueue = kept;
@@ -307,7 +307,7 @@ void takeMyCommands() {
 void maybeAddRandomCommand() {
   if (random(100) >= ADD_CHANCE) return;
   if (countCmds(cmdQueue) >= MAX_CMDS) return;
-  int boards = random(1, 8); //001-111
+  int boards = random(1, 16); //0001-1111
   int colors = random(1, 8); 
   String counts = "";
   for (int bit = 0; bit < 3; bit++) {
@@ -315,7 +315,7 @@ void maybeAddRandomCommand() {
     if (counts.length() > 0) counts += ",";
     counts += String(random(1, MAX_RANDOM_COUNT + 1));
   }
-  String entry = bits3(boards) + "/" + bits3(colors) + "/" + counts;
+  String entry = bits4(boards) + "/" + bits3(colors) + "/" + counts;
   if (cmdQueue.length() > 0) cmdQueue += "|";
   cmdQueue += entry;
   Serial.print("Added random command: ");
@@ -351,7 +351,7 @@ void finishCS() {
 // *PASSING THE TOKEN*
 
 void sendToken() {
-  String msg = String("TOKEN:") + String(tokenSeq) + ":" + bits3(NODE_BITS[passTarget]) + ":" + lnString() + ":" + qString() + ":" + cmdString();
+  String msg = String("TOKEN:") + String(tokenSeq) + ":" + bits4(NODE_BITS[passTarget]) + ":" + lnString() + ":" + qString() + ":" + cmdString();
   broadcast(msg);
   Serial.print("Passed token seq=");
   Serial.print(tokenSeq);
@@ -417,7 +417,7 @@ void updatePass() {
     return;
   }
   Serial.print("Giving up on ");
-  Serial.print(bits3(NODE_BITS[passTarget]));
+  Serial.print(bits4(NODE_BITS[passTarget]));
   Serial.println(" - dropping its request");
   LN[passTarget] = RN[passTarget]; //it will ask again with new request number
   arrivalRemove(passTarget);
@@ -431,7 +431,7 @@ void sendRequest() {
   RN[me()]++;
   requesting = true;
   requestedAt = millis();
-  String msg = String("REQ:") + bits3(MY_NODE) + ":" + String(RN[me()]);
+  String msg = String("REQ:") + bits4(MY_NODE) + ":" + String(RN[me()]);
   broadcast(msg);
   Serial.print("Requested token: ");
   Serial.println(msg);
@@ -442,13 +442,13 @@ void handleRequest(const String& s) {
   int c1 = s.indexOf(':');
   int c2 = s.indexOf(':', c1 + 1);
   if (c2 < 0) return;
-  int j = nodeIndex(parseBits3(s.substring(c1 + 1, c2)));
+  int j = nodeIndex(parseBits4(s.substring(c1 + 1, c2)));
   unsigned long n = (unsigned long)s.substring(c2 + 1).toInt();
   if (j < 0 || j == me() || n <= RN[j]) return;
   RN[j] = n;
   arrivalAdd(j); //first arrival keeps its place, this is the race
   Serial.print("Request from ");
-  Serial.print(bits3(NODE_BITS[j]));
+  Serial.print(bits4(NODE_BITS[j]));
   Serial.print(" n=");
   Serial.println(n);
 }
@@ -472,7 +472,7 @@ void handleTack(const String& s) {
 }
 
 void sendTack(unsigned long tseq) {
-  String msg = String("TACK:") + String(tseq) + ":" + bits3(MY_NODE);
+  String msg = String("TACK:") + String(tseq) + ":" + bits4(MY_NODE);
   broadcast(msg);
   Serial.print("Sent ");
   Serial.println(msg);
@@ -487,7 +487,7 @@ void handleToken(const String& s) {
   int c5 = s.indexOf(':', c4 + 1);
   if (c2 < 0 || c3 < 0 || c4 < 0 || c5 < 0) return;
   unsigned long tseq = (unsigned long)s.substring(c1 + 1, c2).toInt();
-  int to = parseBits3(s.substring(c2 + 1, c3));
+  int to = parseBits4(s.substring(c2 + 1, c3));
   if (to < 0) return;
 
   if (to != MY_NODE) {
@@ -656,7 +656,7 @@ void setup() {
   Serial.print("UDP port: ");
   Serial.println(PORT);
   Serial.print("Node: ");
-  Serial.println(bits3(MY_NODE));
+  Serial.println(bits4(MY_NODE));
 
   if (CREATES_TOKEN) {
     hasToken = true;
