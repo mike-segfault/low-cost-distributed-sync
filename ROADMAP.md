@@ -12,6 +12,10 @@
 - [x] 3-bit sequences for activating lights off broadcasting/received message
 - [x] 4-bit sequence for machine ID
 
+### Distributed Synchronization
+- [x] Centralized token ring (central creates token, boards pass in ring)
+- [x] Decentralized Suzuki-Kasami-style token
+
 ---
 
 ## In Progress
@@ -28,10 +32,5 @@
 
 ---
 
-### Distributed Synchronization
-
-
 ### Classical Synchronization Problems
-
-
-### Analysis
+- [ ] Dining Philosophers mapped onto boards (forks as tokens between neighbors)
