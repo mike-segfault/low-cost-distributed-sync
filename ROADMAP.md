@@ -30,7 +30,5 @@
 ## Planned
 - [ ] Utilize GitDiagram to visualize repo structure
 
----
-
 ### Classical Synchronization Problems
 - [ ] Dining Philosophers mapped onto boards (forks as tokens between neighbors)
