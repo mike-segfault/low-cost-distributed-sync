@@ -4,9 +4,9 @@
 Modifiable token. Functions were needed for every aspect of the cmd parsing and
 handling of the tasks. Everything is self-contained.
 
-Board 1 (ESP32), node 001. Creates the token at boot.
+Board 1 (ESP32), node 0001. Creates the token at boot.
 Suzuki-Kasami token peer. No coordinator: the ESP32 access point only provides
-WiFi and logs traffic. Peers: B1 (001), B2 (010), B3 (100).
+WiFi and logs traffic. Peers: B1 (0001), B2 (0010), B3 (0100), B4 (1000).
 
 Asking for the token: at random intervals this board broadcasts
 "REQ:<node>:<n>" without knowing what's on the token. Every board records
@@ -33,8 +33,8 @@ WiFiUDP udp;
 IPAddress bcast(192, 168, 4, 255);
 
 const int MY_NODE = 0b0001; //BOARD 1 = 0001
-const int NODES = 3;
-const int NODE_BITS[NODES] = {0b0001, 0b0010, 0b0100}; //B1,B2,B3,B4
+const int NODES = 4;
+const int NODE_BITS[NODES] = {0b0001, 0b0010, 0b0100, 0b1000}; //B1,B2,B3,B4
 const bool CREATES_TOKEN = true; //one node creates token at boot
 
 const int RED_PIN   = 14; //D14
@@ -92,7 +92,7 @@ int passTarget = -1; //node index being given token
 int passAttempt = 0; //0 = first send, 1+ = retries
 unsigned long passStartedAt = 0;
 
-//3-bit value
+//4-bit value
 String bits4(int v) {
   String out = "";
   for (int bit = 3; bit >= 0; bit--) out += ((v >> bit) & 1) ? '1' : '0';
@@ -110,7 +110,7 @@ int parseBits4(const String& s) {
   return v;
 }
 
-//node bits, index (001 -> 0, 010 -> 1, 100 -> 2 ),  -1 if not a node
+//node bits, index (0001 -> 0, 0010 -> 1, 0100 -> 2, 1000 -> 3),  -1 if not a node
 int nodeIndex(int bits) {
   for (int i = 0; i < NODES; i++) {
     if (NODE_BITS[i] == bits) return i;
