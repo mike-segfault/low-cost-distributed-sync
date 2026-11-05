@@ -12,9 +12,9 @@ flowchart LR
 %%{init: {"sequence": {"mirrorActors": false}}}%%
 sequenceDiagram
     actor U as You
-    participant C as Central (000)
-    participant B1 as B1 (001)
-    participant B2 as B2 (010)
+    participant C as Central 000 (ESP32)
+    participant B1 as B1 001 (ESP32)
+    participant B2 as B2 010 (ESP8266)
     U->>C: types 011 101 3 5
     Note over C: when the token comes back, adds 011/101/3,5 to it
     C->>B1: TOKEN (queue: 011/101/3,5)
