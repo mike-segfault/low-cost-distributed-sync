@@ -23,11 +23,7 @@ sequenceDiagram
     S->>B2: same broadcast
     B1->>S: OK:seq:001
     B2->>S: OK:seq:010
-    par B1
-        B1->>B1: blink red 3, blue 5
-    and B2
-        B2->>B2: blink red 3, blue 5
-    end
+    Note over B1,B2: both blink red 3, blue 5 at the same time
     B1->>S: DONE:seq:001
     B2->>S: DONE:seq:010
     Note over S: each board is free for its next command
