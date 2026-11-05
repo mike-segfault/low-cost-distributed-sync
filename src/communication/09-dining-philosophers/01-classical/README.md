@@ -1,6 +1,6 @@
 # 01 - Classical Dining Philosophers
 
-Four philosopher boards share four forks around a table and follow the classical rules with no changes: pick up the left fork, then the right, and hold on to whatever has been picked up while waiting. A fifth board, the listener, sets the table and can make every philosopher hungry at once. When it does, every philosopher ends up holding one fork and waiting forever for the other. **This version exists to deadlock.** It demonstrates the problem that [02-prevention](../02-prevention/) solves.
+Four philosopher boards share four forks around a table and follow the classical rules with no changes: pick up the left fork, then the right, and hold on to whatever has been picked up while waiting. A fifth board, the listener, sets the table and can make every philosopher hungry at once. When it does, every philosopher ends up holding one fork and waiting forever for the other. **This version exists to deadlock.** ~~It demonstrates the problem that [02-prevention](../02-prevention/) solves.~~ (WIP)
 
 The design decisions and hardware limitations behind this implementation are described in [DINING_PHILOSOPHERS.md](../../../documentation/DINING_PHILOSOPHERS.md).
 
