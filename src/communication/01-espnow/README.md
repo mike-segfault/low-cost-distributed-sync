@@ -17,6 +17,12 @@ Both boards run in WiFi station mode without joining a network, and they initial
 
 The rest of this README walks through the ESP-NOW API calls and types the sketches use, in the order they run.
 
+### How ESP-NOW fits in
+
+Most networking follows the **OSI model**: seven layers stacked on top of each other with each handling one job. At the bottom, the radio sends signals (physical layer) and devices recognize each other on the same network (data link layer). Above that, layers handle addressing across networks (IP), delivering messages reliably (TCP/UDP), and finally the app itself. Every message passes down through all of these layers on one device and back up through them on the other.
+
+ESP-NOW skips most of that. It keeps the bottom two layers, the WiFi radio and device-to-device recognition, and replaces everything above them with one simple layer of its own. In practice, that means boards talk to each other directly, using each board's unique hardware address (its MAC address). There's no joining a network or getting an IP address before sending. Each message holds up to 250 bytes, which is plenty for sensor readings or commands. ESP-NOW doesn't guarantee a message arrived, and it only works between Espressif boards like the ESP32 and ESP8266. From stage 02 onward, this project uses a regular WiFi network and UDP instead.
+
 ## Starting WiFi and ESP-NOW
 
 ```cpp
