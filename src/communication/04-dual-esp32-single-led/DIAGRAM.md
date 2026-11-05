@@ -3,8 +3,8 @@
 ```mermaid
 flowchart LR
     U(["You"]) -- "blink count" --> S["ESP32 sender<br/>access point 32_AP"]
-    S -- "UDP broadcast" --> R["ESP32 receiver<br/>joins 32_AP"]
-    R -- "OK reply" --> S
+    S -- "broadcast" --> R["ESP32 receiver<br/>joins 32_AP"]
+    R -- "OK" --> S
     R --> L(("LED"))
 ```
 
