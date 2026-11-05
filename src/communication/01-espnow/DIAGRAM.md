@@ -2,8 +2,8 @@
 flowchart LR
     S[ESP32 sender] -- "ESP-NOW, by MAC address" --> R[ESP32 receiver]
 ```
-
 ```mermaid
+%%{init: {"sequence": {"mirrorActors": false}}}%%
 sequenceDiagram
     participant S as Sender (ESP32)
     participant R as Receiver (ESP32)
