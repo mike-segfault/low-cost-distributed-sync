@@ -1,14 +1,13 @@
 ## 08 - Suzuki-Kasami
 
 ```mermaid
-flowchart TB
-    O["Observer ESP32<br/>access point, logs only"]
-    B1["B1 001<br/>ESP32"] <-- "token" --> B2["B2 010<br/>ESP8266"]
-    B2 <-- "token" --> B3["B3 100<br/>ESP8266"]
-    B3 <-- "token" --> B1
-    O -.- B1
-    O -.- B2
-    O -.- B3
+flowchart LR
+    O["Observer ESP32<br/>access point, logs only"] -.- P
+    subgraph P [Peers]
+        B1["B1 001<br/>ESP32"] <-- "token" --> B2["B2 010<br/>ESP8266"]
+        B2 <-- "token" --> B3["B3 100<br/>ESP8266"]
+        B3 <-- "token" --> B1
+    end
 ```
 
 ```mermaid
