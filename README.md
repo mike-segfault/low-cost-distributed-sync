@@ -49,7 +49,8 @@ This project examines the topic of distributed process synchronization with the 
 3. Lipovski, G. Jack. *Single and Multi-Chip Microcontroller Interfacing: For the Motorola 6812*. Academic Press, 1999. Available through EBSCO: https://research.ebsco.com/plink/59f0289b-fa6e-3891-9082-e73ef07bce15
 4. Munir, Arslan, et al. *Modeling and Optimization of Parallel and Distributed Embedded Systems*. John Wiley & Sons, 2016. https://ebookcentral.proquest.com/lib/clarion-ebooks/detail.action?docID=4305723
 5. Patil, Suhas S. *Limitations and Capabilities of Dijkstra's Semaphore Primitives for Coordination among Processes*. Group Memo 57, February 1971. https://wiki.eecs.yorku.ca/course_archive/2014-15/W/6490A/_media/public:patil.pdf
-6. ROHINI College of Engineering and Technology. *Distributed Embedded Systems*. https://www.rcet.org.in/uploads/academics/rohini_85806983944.pdf
-7. Silberschatz, Avi, Peter Baer Galvin, and Greg Gagne. *Operating System Concepts*. Chapters 6-8. John Wiley & Sons, 2018.
-8. Suzuki, Ichiro, Tadao Kasami. *A distributed mutual exclusion algorithm*. ACM Transactions on Computer Systems (TOCS), Volume 3, Issue 4, Pages 344 - 349, November 1985. https://dl.acm.org/doi/abs/10.1145/6110.214406
-9. Thompson, Michael and Daniel Bennett. *Cigarette Smokers Problem*. April 2026. https://mirkwood.cs.edinboro.edu/~bennett/class/cmsc4000/spring2026/notes/smokers.html
+7. ROHINI College of Engineering and Technology. *Distributed Embedded Systems*. https://www.rcet.org.in/uploads/academics/rohini_85806983944.pdf
+8. Silberschatz, Avi, Peter Baer Galvin, and Greg Gagne. *Operating System Concepts*. Chapters 6-8. John Wiley & Sons, 2018.
+9. Suzuki, Ichiro, Tadao Kasami. *A distributed mutual exclusion algorithm*. ACM Transactions on Computer Systems (TOCS), Volume 3, Issue 4, Pages 344 - 349, November 1985. https://dl.acm.org/doi/abs/10.1145/6110.214406
+10. Thompson, Michael and Daniel Bennett. *Cigarette Smokers Problem*. April 2026. https://mirkwood.cs.edinboro.edu/~bennett/class/cmsc4000/spring2026/notes/smokers.html
+11. M. Singhal and N. G. Shivaratri, *Advanced Concepts in Operating Systems: Distributed, Database, and Multiprocessor Operating Systems*. New York: McGraw-Hill, 1994.
