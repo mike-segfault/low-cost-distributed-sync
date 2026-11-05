@@ -16,7 +16,7 @@ sequenceDiagram
     loop every few seconds
         S->>R: CMD:1:seq:3.14 (broadcast)
         R->>S: OK:seq
-        R->>R: blink LED 3 times
         Note over S: prints the reply
+        R->>R: blink LED 3 times
     end
 ```
