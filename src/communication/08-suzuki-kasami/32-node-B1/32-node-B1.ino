@@ -240,6 +240,20 @@ void parseLN(const String& s) {
   }
 }
 
+//catch up on request numbers from every token that goes by: 
+// a board that rebooted starts counting requests from 0 again, and the others would ignore it as old
+void learnServed(const String& lnField) {
+  int start = 0;
+  for (int i = 0; i < NODES; i++) {
+    int comma = lnField.indexOf(',', start);
+    String part = (comma == -1) ? lnField.substring(start) : lnField.substring(start, comma);
+    unsigned long served = (unsigned long)part.toInt();
+    if (served > RN[i]) RN[i] = served;
+    if (comma == -1) break;
+    start = comma + 1;
+  }
+}
+
 void parseQ(const String& s) {
   tokenQLen = 0;
   if (s == "-") return;
@@ -505,6 +519,7 @@ void handleToken(const String& s) {
   unsigned long tseq = (unsigned long)s.substring(c1 + 1, c2).toInt();
   int to = parseBits4(s.substring(c2 + 1, c3));
   if (to < 0) return;
+  learnServed(s.substring(c3 + 1, c4)); //fix
 
   if (to != MY_NODE) {
     if (tseq > highestSeen) highestSeen = tseq;
