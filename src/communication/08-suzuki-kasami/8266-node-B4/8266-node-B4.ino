@@ -70,6 +70,22 @@ int passTarget = -1; //node index being given token
 int passAttempt = 0; //0 = first send, 1+ = retries
 unsigned long passStartedAt = 0;
 
+String bits3(int v) {
+  String out = "";
+  for (int bit = 2; bit >= 0; bit--) out += ((v >> bit) & 1) ? '1' : '0';
+  return out;
+}
+
+int parseBits3(const String& s) {
+  if (s.length() != 3) return -1;
+  int v = 0;
+  for (int i = 0; i < 3; i++) {
+    if (s[i] != '0' && s[i] != '1') return -1;
+    v = (v << 1) | (s[i] - '0');
+  }
+  return v;
+}
+
 //4-bit value
 String bits4(int v) {
   String out = "";
