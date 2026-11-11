@@ -372,7 +372,7 @@ void sendToken() {
   Serial.print("Passed token seq=");
   Serial.print(tokenSeq);
   Serial.print(" to ");
-  Serial.print(bits3(NODE_BITS[passTarget]));
+  Serial.print(bits4(NODE_BITS[passTarget]));
   if (passAttempt > 0) {
     Serial.print(" (retry ");
     Serial.print(passAttempt);
@@ -424,7 +424,7 @@ void releaseToken() {
 void updatePass() {
   if (!passing || millis() - passStartedAt < TACK_TIMEOUT) return;
   Serial.print("No TACK from ");
-  Serial.print(bits3(NODE_BITS[passTarget]));
+  Serial.print(bits4(NODE_BITS[passTarget]));
   Serial.print(" for seq=");
   Serial.println(tokenSeq);
   if (passAttempt < MAX_RETRIES) {
@@ -475,10 +475,10 @@ void handleTack(const String& s) {
   int c2 = s.indexOf(':', c1 + 1);
   if (c2 < 0) return;
   unsigned long tseq = (unsigned long)s.substring(c1 + 1, c2).toInt();
-  int from = parseBits3(s.substring(c2 + 1));
+  int from = parseBits4(s.substring(c2 + 1));
   if (passing && tseq == tokenSeq && from == NODE_BITS[passTarget]) {
     Serial.print("Token accepted by ");
-    Serial.print(bits3(from));
+    Serial.print(bits4(from));
     Serial.print(" (seq=");
     Serial.print(tseq);
     Serial.println(")");
