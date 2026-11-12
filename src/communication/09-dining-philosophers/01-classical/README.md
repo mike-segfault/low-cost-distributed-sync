@@ -219,4 +219,4 @@ B2 holds fork 0, asks B3 for fork 1, and refuses B1's request for fork 0. Every 
 
 [3] M. Singhal and N. G. Shivaratri, *Advanced Concepts in Operating Systems: Distributed, Database, and Multiprocessor Operating Systems*. New York: McGraw-Hill, 1994.
 
-[5] Suzuki, Ichiro, Tadao Kasami. *A distributed mutual exclusion algorithm*. ACM Transactions on Computer Systems (TOCS), Volume 3, Issue 4, Pages 344 - 349, November 1985. https://dl.acm.org/doi/abs/10.1145/6110.214406.
+[4] Suzuki, Ichiro, Tadao Kasami. *A distributed mutual exclusion algorithm*. ACM Transactions on Computer Systems (TOCS), Volume 3, Issue 4, Pages 344 - 349, November 1985. https://dl.acm.org/doi/abs/10.1145/6110.214406.
