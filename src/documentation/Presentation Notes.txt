@@ -1,0 +1,55 @@
+Cover slide
+Intro slide
+- Who am I, why I did this, etc.
+1st Slide
+- Process
+-- OS running a program
+-- Define Dist. computing
+--- whole bunch of computers running a process
+--- Split up tasks for all/some computers
+--- Group project example
+--- This causes problems (into slide 2)
+2nd slide
+- Deadlock
+-- Race conditions
+-- "Frozen"
+-- Some examples/representations
+3rd slide
+- Dining philosophers
+-- Describe DP
+-- What problems arise 
+-- Deadlock
+-- Picture of philosopher hogging both chopsticks/forks
+-- Like to implement distributed fault-tolerant DP
+4th slide
+- ESP32 & ESP8266
+-- Why? What are they for? What can they do?
+-- Digital output pins
+-- Serial output (baud)
+-- Arduino Framework (Arduino Language/Bastardized C)
+-- Demo for simple flashing lights program and code with it
+5th slide
+- Advanced capabilites
+-- Wireless communication
+--- ESP-NOW
+--- WiFi
+- anything else
+6th slide
+- Framework built for all of this
+-- Listener and nodes
+--- NOT involved in anything, just reads data output from worker nodes
+7th slide
+- Demo deadlock
+-- What each light does
+-- What each worker node is sending out to listener
+-- Explain the actual deadlock happening and serial output
+8th slide
+- Demo solution
+-- Rosenkrantz
+-- Priority
+--- So there is no race conditions
+Thank you, Questions? slide
+- duh
+Sources slide
+- sources
+Take OS with Dan Bennett slide
