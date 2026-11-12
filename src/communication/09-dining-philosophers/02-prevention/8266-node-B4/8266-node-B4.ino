@@ -1,6 +1,37 @@
 /*
 8266-node-B4.ino
 
+Dining Philosophers, deadlock prevention. Philosopher B3 (ESP8266), node 0100.
+
+Four philosophers sit around a table in board-ID order: B1 (0001), B2 (0010),
+B3 (0100), B4 (1000). Fork i lies between philosopher i and philosopher i+1,
+so each board shares its left fork with the previous board and its right fork
+with the next one. A board must hold both forks to eat.
+
+DEADLOCK PREVENTION. Each method removes one of the four conditions needed for
+deadlock (Singhal and Shivaratri, sec. 3.9.3). The listener picks the method and
+sends it in INIT, so all four boards always use the same one:
+  ALL_AT_ONCE  no hold and wait: a hungry board asks for both forks and keeps
+               neither until it has both; a fork given up starts a random
+               backoff before asking again
+  ROSENKRANTZ  allows preemption: a hungry (blocked) board gives up a fork
+               only to a higher-priority requester (lower board ID); forks are
+               requested left first, as in the classical problem
+  HAVENDER     no circular wait: forks are requested in ascending order only;
+               a board holding its lower fork asks only for the higher one
+Every board starts holding its left fork, the same starting position that
+deadlocks the classical version.
+
+There is no shared table, so a fork only exists as a token held by one board.
+Fork transfers are acknowledged (FACK) and resent until confirmed, so a fork is
+never lost or duplicated. The listener ESP32 assigns the initial forks (INIT),
+can make every board hungry at once (HUNGRY), and can send LED commands (CMD)
+that a board runs at its next meal; without a command, a meal is a random
+LED sequence.
+
+LEDs: WAITING on while hungry, TOKEN on while eating, both off while thinking.
+
+Pins are NodeMCU-style D labels; ESP8266 D labels do NOT match GPIO numbers.
 */
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
