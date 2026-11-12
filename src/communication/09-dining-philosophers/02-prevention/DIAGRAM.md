@@ -1,13 +1,13 @@
 ## 09 - Dining Philosophers: 02 - Prevention
 
 ```mermaid
-flowchart LR
+flowchart TB
     L["Listener ESP32<br/>picks the method"] -- "INIT + method<br/>A, R, or H" --> T
     subgraph T [Table]
-        B1["B1 0001"] --- |"fork 0"| B2["B2 0010"]
-        B2 --- |"fork 1"| B3["B3 0100"]
-        B3 --- |"fork 2"| B4["B4 1000"]
-        B4 --- |"fork 3"| B1
+        B1["B1 0001"] --- |"fork 3"| B4["B4 1000"]
+        B1 --- |"fork 0"| B2["B2 0010"]
+        B4 --- |"fork 2"| B3["B3 0100"]
+        B2 --- |"fork 1"| B3
     end
 ```
 
