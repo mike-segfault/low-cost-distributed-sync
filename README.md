@@ -35,10 +35,6 @@ This project examines the topic of distributed process synchronization with the 
 
 ## Planned Work
 ### Future work includes:
-- Distributed mutex implementations
-- Distributed semaphore mechanisms
-- Producer-consumer systems
-- Dining Philosophers problem
 - Cigarette Smokers problem
 - Additional synchronization experiments on constrained hardware
 - Evaluation of synchronization performance and scalability across multiple nodes
